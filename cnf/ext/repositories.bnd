@@ -24,6 +24,10 @@ maven-core: aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
  name="Maven Core"; \
  query="q=g:org.apache.maven+AND+a:maven-core+AND+v:3.3.3&rows=1"; \
  releaseUrls="https://repo1.maven.org/maven2"
+plexus: aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
+ name="Plexus"; \
+ query="q=g:org.sonatype.plexus+AND+a:plexus-build-api+AND+v:0.0.7&rows=1"; \
+ releaseUrls="https://repo1.maven.org/maven2"
 
 
 #
@@ -62,6 +66,7 @@ jpm:\
 	${eclipse-emf},\
 	${eclipse-wtp},\
 	${maven-core},\
+	${plexus},\
 	aQute.bnd.deployer.repository.LocalIndexedRepo; \
 		name='Release'; \
 		local=${workspace}/build/releaserepo; \

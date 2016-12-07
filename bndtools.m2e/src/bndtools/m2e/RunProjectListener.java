@@ -14,7 +14,7 @@ public class RunProjectListener implements LaunchListener {
         if (project instanceof Run) {
             Run run = (Run) project;
 
-            run.getWorkspace().addBasicPlugin(new MavenWorkspaceRepository());
+            run.getWorkspace().addBasicPlugin(new MavenBuildRepository());
         }
     }
 
@@ -23,10 +23,9 @@ public class RunProjectListener implements LaunchListener {
         if (project instanceof Run) {
             Run run = (Run) project;
 
-            MavenWorkspaceRepository repo = run.getWorkspace().getPlugin(MavenWorkspaceRepository.class);
+            MavenBuildRepository repo = run.getWorkspace().getPlugin(MavenBuildRepository.class);
 
             if (repo != null) {
-                repo.cleanup();
                 run.getWorkspace().removeBasicPlugin(repo);
             }
         }
