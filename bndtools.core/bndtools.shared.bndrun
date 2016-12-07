@@ -56,7 +56,8 @@ gogo.bundles:\
 	org.apache.felix.gogo.runtime
 
 m2e.bundles:\
-	com.google.guava,\
+	bndtools.m2e,\
+	com.google.guava;version='[15,16)',\
 	ch.qos.logback.classic,\
 	ch.qos.logback.core,\
 	org.apache.xerces,\

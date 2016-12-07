@@ -1,0 +1,36 @@
+-include: ${workspace}/cnf/eclipse/jdt.bnd
+
+-buildpath: \
+	${bndlib},\
+	bndtools.api;version=latest,\
+	bndtools.core;version=latest,\
+	org.apache.maven:maven-core,\
+	org.apache.maven:maven-model,\
+	org.eclipse.core.jobs,\
+	org.eclipse.core.resources,\
+	org.eclipse.core.runtime,\
+	org.eclipse.debug.core,\
+	org.eclipse.equinox.common,\
+	org.eclipse.m2e.core,\
+	osgi.core;version=${osgi.core.version},\
+	osgi.cmpn;version=${osgi.core.version}
+
+Bundle-SymbolicName: bndtools.m2e; singleton:=true
+Bundle-ActivationPolicy: lazy
+
+# Require-Bundle is required to get Eclipse to load org.apache.maven.* classes exported by org.eclipse.m2e.maven.runtime
+Require-Bundle: \
+	aQute.libg,\
+	biz.aQute.bndlib,\
+	bndtools.api,\
+	org.eclipse.core.jobs,\
+	org.eclipse.core.resources,\
+	org.eclipse.debug.core,\
+	org.eclipse.equinox.common,\
+	org.eclipse.m2e.core,\
+	org.eclipse.m2e.maven.runtime
+
+-removeheaders: Import-Package
+
+Private-Package: \
+	bndtools.m2e.*
