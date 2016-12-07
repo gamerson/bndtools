@@ -22,13 +22,12 @@ eclipse-wtp: aQute.bnd.repository.p2.provider.P2Repository; \
  url="http://download.eclipse.org/webtools/downloads/drops/R3.7.2/R-3.7.2-20160217020110/repository/"
 maven-core: aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
  name="Maven Core"; \
- query="q=g:org.apache.maven+AND+a:maven-core+AND+v:3.3.3&rows=1"; \
+ revision="org.apache.maven:maven-core:3.3.3"; \
  releaseUrls="https://repo1.maven.org/maven2"
 plexus: aQute.bnd.repository.maven.pom.provider.BndPomRepository; \
- name="Plexus"; \
- query="q=g:org.sonatype.plexus+AND+a:plexus-build-api+AND+v:0.0.7&rows=1"; \
+ name="Plexus API"; \
+ revision="org.sonatype.plexus:plexus-build-api:0.0.7"; \
  releaseUrls="https://repo1.maven.org/maven2"
-
 
 #
 # Bnd Repository. See ${workspace}/gradle.properties for the bnd_repourl property.
