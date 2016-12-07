@@ -9,6 +9,7 @@ import java.util.logging.Level;
 
 import org.bndtools.api.ILogger;
 import org.bndtools.api.Logger;
+import org.bndtools.api.LaunchListener;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +24,9 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.JavaLaunchDelegate;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 import aQute.bnd.build.Project;
 import aQute.bnd.build.ProjectLauncher;
@@ -35,7 +39,17 @@ public abstract class AbstractOSGiLaunchDelegate extends JavaLaunchDelegate {
     private static final String ATTR_LOGLEVEL = LaunchConstants.ATTR_LOGLEVEL;
     private static final ILogger logger = Logger.getLogger(AbstractOSGiLaunchDelegate.class);
 
+    private final BundleContext context = FrameworkUtil.getBundle(AbstractOSGiLaunchDelegate.class).getBundleContext();
+    private final ServiceTracker<LaunchListener,LaunchListener> launchListeners;
+
     protected Project model;
+
+    public AbstractOSGiLaunchDelegate() {
+        super();
+
+        launchListeners = new ServiceTracker<LaunchListener,LaunchListener>(context, LaunchListener.class, null);
+        launchListeners.open();
+    }
 
     protected abstract ProjectLauncher getProjectLauncher() throws CoreException;
 
@@ -50,6 +64,19 @@ public abstract class AbstractOSGiLaunchDelegate extends JavaLaunchDelegate {
 
         try {
             model = LaunchUtils.getBndProject(configuration);
+
+            for (Object service : launchListeners.getServices()) {
+                if (service instanceof LaunchListener) {
+                    LaunchListener launchListener = (LaunchListener) service;
+
+                    try {
+                        launchListener.buildForLaunch(model);
+                    } catch (Throwable t) {
+                        logger.logError("Error building model for launch", t);
+                    }
+                }
+            }
+
             initialiseBndLauncher(configuration, model);
         } catch (Exception e) {
             throw new CoreException(new Status(IStatus.ERROR, Plugin.PLUGIN_ID, 0, "Error initialising bnd launcher", e));
@@ -128,6 +155,18 @@ public abstract class AbstractOSGiLaunchDelegate extends JavaLaunchDelegate {
                                     launcher.cleanup();
                                 } catch (Throwable t) {
                                     logger.logError("Error cleaning launcher temporary files", t);
+                                }
+
+                                for (Object service : launchListeners.getServices()) {
+                                    if (service instanceof LaunchListener) {
+                                        LaunchListener launchListener = (LaunchListener) service;
+
+                                        try {
+                                            launchListener.cleanup(launcher.getProject());
+                                        } catch (Throwable t) {
+                                            logger.logError("Error in launch listener cleanup", t);
+                                        }
+                                    }
                                 }
                             }
                         }
