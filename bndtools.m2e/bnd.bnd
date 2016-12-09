@@ -6,6 +6,7 @@
 	bndtools.core;version=latest,\
 	org.apache.maven:maven-core,\
 	org.apache.maven:maven-model,\
+	org.codehaus.plexus:plexus-utils,\
 	org.eclipse.core.jobs,\
 	org.eclipse.core.resources,\
 	org.eclipse.core.runtime,\
@@ -22,10 +23,28 @@ Bundle-SymbolicName: bndtools.m2e; singleton:=true
 Bundle-ActivationPolicy: lazy
 
 Import-Package: \
+	org.apache.maven.lifecycle;provider=m2e,\
 	org.apache.maven.model;provider=m2e,\
 	org.apache.maven.plugin;provider=m2e,\
 	org.apache.maven.project;provider=m2e,\
+	org.codehaus.plexus.util.xml;provider=m2e,\
 	*
+
+# Require-Bundle is required to get Eclipse to load org.apache.maven.* classes exported by org.eclipse.m2e.maven.runtime
+#Require-Bundle: \
+#	aQute.libg,\
+#	biz.aQute.bndlib,\
+#	bndtools.api,\
+#	org.eclipse.core.jobs,\
+#	org.eclipse.core.resources,\
+#	org.eclipse.debug.core,\
+#	org.eclipse.equinox.common,\
+#	org.eclipse.equinox.registry,\
+#	org.eclipse.m2e.core,\
+#	org.eclipse.m2e.jdt,\
+#	org.eclipse.m2e.maven.runtime
+#
+#-removeheaders: Import-Package
 
 Private-Package: \
 	bndtools.m2e.*

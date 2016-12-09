@@ -57,6 +57,7 @@ gogo.bundles:\
 
 m2e.bundles:\
 	bndtools.m2e,\
+	bndtools.m2e.runtime,\
 	com.google.guava;version='[15,16)',\
 	ch.qos.logback.classic,\
 	ch.qos.logback.core,\
@@ -239,3 +240,5 @@ crossplatform.runprops: \
 	osgi.console=,\
 	osgi.instance.area.default=../bndtools.test/workspace,\
 	osgi.console.enable.builtin=false
+
+-runsystempackages.m2e: javax.net.ssl
