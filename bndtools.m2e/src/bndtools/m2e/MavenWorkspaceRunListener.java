@@ -1,37 +1,45 @@
 package bndtools.m2e;
 
 import org.bndtools.api.RunListener;
+import org.eclipse.core.resources.IResource;
 import org.osgi.service.component.annotations.Component;
 
 import aQute.bnd.build.Run;
 import aQute.bnd.build.Workspace;
+import bndtools.launch.util.LaunchUtils.Mode;
 
 @Component
 public class MavenWorkspaceRunListener implements RunListener {
 
     @Override
-    public void create(Run run) throws Exception {
+    public void create(Run run, IResource targetResource) throws Exception {
         Workspace workspace = run.getWorkspace();
-        MavenWorkspaceRepository repo = workspace.getPlugin(MavenWorkspaceRepository.class);
 
-        if (repo == null) {
-            repo = new MavenWorkspaceRepository();
-            workspace.getRepositories()
-                .add(0, repo);
-            workspace.addBasicPlugin(repo);
+        if (Mode.getMode(run) == Mode.LAUNCH) {
+            MavenWorkspaceRepository repo = workspace.getPlugin(MavenWorkspaceRepository.class);
+
+            if (repo == null) {
+                repo = new MavenWorkspaceRepository();
+                workspace.getRepositories()
+                    .add(0, repo);
+                workspace.addBasicPlugin(repo);
+            }
         }
     }
 
     @Override
     public void end(Run run) throws Exception {
         Workspace workspace = run.getWorkspace();
-        MavenWorkspaceRepository repo = workspace.getPlugin(MavenWorkspaceRepository.class);
 
-        if (repo != null) {
-            workspace.getRepositories()
-                .remove(repo);
-            workspace.removeBasicPlugin(repo);
-            repo.cleanup();
+        if (Mode.getMode(run) == Mode.LAUNCH) {
+            MavenWorkspaceRepository repo = workspace.getPlugin(MavenWorkspaceRepository.class);
+
+            if (repo != null) {
+                workspace.getRepositories()
+                    .remove(repo);
+                workspace.removeBasicPlugin(repo);
+                repo.cleanup();
+            }
         }
     }
 }
