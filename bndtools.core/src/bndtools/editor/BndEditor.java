@@ -100,6 +100,8 @@ import bndtools.editor.pages.ProjectRunPage;
 import bndtools.editor.pages.TestSuitesPage;
 import bndtools.editor.pages.WorkspacePage;
 import bndtools.launch.LaunchConstants;
+import bndtools.launch.util.LaunchUtils;
+import bndtools.launch.util.LaunchUtils.Mode;
 import bndtools.preferences.BndPreferences;
 import bndtools.types.Pair;
 
@@ -131,6 +133,7 @@ public class BndEditor extends ExtendedFormEditor implements IResourceChangeList
     private BndSourceEditorPage sourcePage;
     private Promise<Workspace> modelReady;
 
+    private IResource inputResource;
     private File inputFile;
 
     static Pair<String, String> getFileAndProject(IEditorInput input) {
@@ -520,6 +523,7 @@ public class BndEditor extends ExtendedFormEditor implements IResourceChangeList
             final String resourceName;
             IResource inputResource = ResourceUtil.getResource(input);
             if (inputResource != null) {
+                this.inputResource = inputResource;
                 inputResource.getWorkspace()
                     .addResourceChangeListener(this);
                 resourceName = inputResource.getName();
@@ -598,8 +602,7 @@ public class BndEditor extends ExtendedFormEditor implements IResourceChangeList
 
     private Promise<Workspace> loadEditModel() throws Exception {
         // Create the bnd edit model and workspace
-        Workspace ws = Central.getWorkspaceIfPresent();
-        Project bndProject = Run.createRun(ws, inputFile);
+        Project bndProject = LaunchUtils.createRun(inputResource, Mode.EDIT);
         model.setWorkspace(bndProject.getWorkspace());
         model.setProject(bndProject);
 
@@ -615,7 +618,7 @@ public class BndEditor extends ExtendedFormEditor implements IResourceChangeList
                         IDocument document = docProvider.getDocument(getEditorInput());
                         model.loadFrom(new IDocumentWrapper(document));
                         model.setBndResource(inputFile);
-                        completed.resolve(ws);
+                        completed.resolve(model.getWorkspace());
                     } catch (IOException e) {
                         logger.logError("Unable to load edit model", e);
                         completed.fail(e);
@@ -699,6 +702,8 @@ public class BndEditor extends ExtendedFormEditor implements IResourceChangeList
             resource.getWorkspace()
                 .removeResourceChangeListener(this);
         }
+
+        LaunchUtils.endRun((Run) model.getProject());
 
         buildFileImg.dispose();
         if (resolveHandlerActivation != null) {

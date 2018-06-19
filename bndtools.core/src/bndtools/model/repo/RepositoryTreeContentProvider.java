@@ -125,7 +125,7 @@ public class RepositoryTreeContentProvider implements ITreeContentProvider {
 
             // check to make sure there are actual changes to repo lists
             // before clearing cache
-            if (oldInput != null && (!oldInput.equals(newInput))) {
+            if (oldInput != null) {
                 repoPluginListResults.clear();
             }
         }
